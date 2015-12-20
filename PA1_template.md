@@ -1,23 +1,48 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+# Reproducible Research: Peer Assessment 1
 
 
 ## Loading and preprocessing the data
 
 I'm high-maintenance...
-```{r results="hide"}
+
+```r
 require(dplyr)
+```
+
+```
+## Loading required package: dplyr
+## 
+## Attaching package: 'dplyr'
+## 
+## The following objects are masked from 'package:stats':
+## 
+##     filter, lag
+## 
+## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union
+```
+
+```r
 require(ggplot2)
+```
+
+```
+## Loading required package: ggplot2
+```
+
+```r
 require(lubridate)
+```
+
+```
+## Loading required package: lubridate
 ```
 
 The data is read in and dates changed to lubridates.
 
-```{r}
+
+```r
 unzip("activity.zip", exdir="data")
 activity_data <- read.csv("data/activity.csv")
 
@@ -28,7 +53,8 @@ activity_data$date <- ymd(activity_data$date)
 
 To answer this question, we need to group the data frame by day, sum the total steps per day.
 
-```{r}
+
+```r
 steps_per_day <- activity_data %>%
   tbl_df %>%
   mutate(steps = as.numeric(as.character(steps))) %>%
@@ -38,24 +64,28 @@ steps_per_day <- activity_data %>%
 
 We then plot total steps per day:
 
-```{r}
+
+```r
 hist(steps_per_day$total_steps, breaks=7,
      main = "Total Steps per Day", 
      xlab = "total steps/day")
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-4-1.png) 
 
 It looks normally distributed, with between 10,000 and 15,000 being the most
 most common count of total steps in a day.
 
 The mean and median of the total steps per day can now be calculated.
 
-```{r}
+
+```r
 mean_total_steps <- mean(steps_per_day$total_steps, na.rm=TRUE)
 median_total_steps <- median(steps_per_day$total_steps, na.rm=TRUE)
 ```
 
-The mean of total steps per day is `r mean_total_steps`.
-The median of total steps per day is `r median_total_steps`. 
+The mean of total steps per day is 1.0754923\times 10^{4}.
+The median of total steps per day is 1.06825\times 10^{4}. 
 
 These are pretty close - another indication that total steps per day
 are normally distributed. Initially I would expect our participant to work
@@ -68,7 +98,8 @@ The average daily activity pattern is more specifically obtained by
 taking the mean of each interval period over all the days. We can take a
 look at the plot of mean steps as a function of each interval period.
 
-```{r}
+
+```r
 steps_per_interval <- activity_data %>%
   tbl_df %>%
   group_by(interval) %>%
@@ -78,24 +109,28 @@ par(mfrow =c(1,1))
 with(steps_per_interval, plot(interval, steps2, type="l", col = "blue"))
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-6-1.png) 
+
 
 And which interval contains the largest steps? We can compute this by
 indexing the max steps and using this index to obtain the interval.
 
-```{r}
+
+```r
 largest_interval <- which.max(steps_per_interval$steps2)
 int <- steps_per_interval$interval[largest_interval]
 int2 <- int+5
 ```
 
-The interval containing the largest steps is `r int` - `r int2`.
+The interval containing the largest steps is 835 - 840.
 
 ## Imputing missing values
 
 Many of the days have missing values. Possibly, some of the days are completely
 missing values, while some of the days may only have a few missing.
 
-```{r}
+
+```r
 dim_activity_data <- dim(activity_data)
 how_many_na <- sum(is.na(activity_data$steps))
 
@@ -103,7 +138,7 @@ percentage_na <- how_many_na/dim_activity_data[1]
 percentage_na <- percentage_na * 100
 ```
 
-There are `r how_many_na` missing values which comprise `r percentage_na` 
+There are 2304 missing values which comprise 13.1147541 
 of the dataset.
 
 One strategy for filling in these values would be to either:
@@ -114,7 +149,8 @@ One strategy for filling in these values would be to either:
 
 I first create a data frame only containing the mean values for each day:
 
-```{r}
+
+```r
 activity_data_na <- activity_data #new df to have na values replaced.
 
 ##Na_replace is data frame of mean steps per day
@@ -125,7 +161,8 @@ na_replace <- activity_data_na %>%
 
 Then I create several placeholder integers/vectors to be used in the for loop.
 
-```{r}
+
+```r
 date_for_mean <- ymd("2012-10-01")
 grab <- as.integer(0)
 j <- as.integer(0)
@@ -135,7 +172,8 @@ The for/if/else construct determines the conditions sufficient for
 distinguishing the two situations outlined above - missing values within days and
 missing values for entire days.
 
-```{r cache=TRUE}
+
+```r
 for (i in 1:length(activity_data_na$steps)) {
   all_means <- mean(na_replace$steps_mean, na.rm=TRUE) #find mean of all data
   date_for_mean <- ymd(activity_data_na[i,2]) 
@@ -164,7 +202,8 @@ for (i in 1:length(activity_data_na$steps)) {
 Now let's compare the data with/without NA values replaced. First we calculate 
 the total steps per day and compare histograms.
 
-```{r}
+
+```r
 steps_per_day_na <- activity_data_na %>%
   tbl_df %>%
   mutate(steps = as.numeric(as.character(steps))) %>%
@@ -186,6 +225,8 @@ hist(steps_per_day_na$total_steps, breaks=7,
      xlab = "total mean steps/day")
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-12-1.png) 
+
 We can distinctly see that while the data appears to be normally distributed in
 both, replacing the missing values lead to higher counts of steps per day in the
 most frequent category, 10,000-15,000 steps per day.
@@ -193,7 +234,8 @@ most frequent category, 10,000-15,000 steps per day.
 Furthermore, we should look at a comparison between the mean and median of the
 data. 
 
-```{R}
+
+```r
 ##With NA Values
 mean_total_steps <- mean(steps_per_day$total_steps, na.rm=TRUE)
 median_total_steps <- median(steps_per_day$total_steps, na.rm=TRUE)
@@ -208,6 +250,12 @@ names(df) <- c("mean", "median")
 print(df, type="html")
 ```
 
+```
+##                mean   median
+## With NA    10754.92 10766.19
+## Without NA 10682.50 10766.19
+```
+
 The median remains the same, unsurprisingly. The mean is only reduced slightly by
 the presence of NA values.
 
@@ -217,7 +265,8 @@ To find this, we need a new factor variable that keeps track of whether the day 
 a weekend or a weekday. I use a for/if/else construct to determine this per row.
 I also convert the column to a facor and name it.
 
-```{r}
+
+```r
 ##FOR LOOPS FOR DAYS..>FEELING IT
 for (i in 1:17568) {
 ifelse(any(weekdays(activity_data_na$date[i]) == 
@@ -234,7 +283,8 @@ names(activity_data_na) <- c("steps", "date", "interval", "Day")
 Next is simply a matter of using the same program to average the steps per day per
 interval, and we also group by the type of day (labelled "Day").
 
-``` {r}
+
+```r
 steps_per_interval_na <- activity_data_na %>%
   tbl_df %>%
   group_by(interval, Day) %>%
@@ -243,13 +293,14 @@ steps_per_interval_na <- activity_data_na %>%
 
 Let's visualize the data. 
 
-``` {r}
 
+```r
 p <- ggplot(steps_per_interval_na, aes(interval, steps2)) + 
               geom_line(aes(colour = Day, Group = Day), size=.75) + theme_bw()
 p + scale_fill_manual(values=c("#CC6666", "#9999CC"))
-
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-16-1.png) 
 
 It appears that my initial expectation is confirmed to an extent with this data.
 Our subject has a spike in steps at the beginning of the day and at the end of the
@@ -258,10 +309,13 @@ distributed throughout the day.
 
 Let's view it again as a conditioning plot:
 
-``` {r}
+
+```r
 p <- qplot(data=steps_per_interval_na, interval, steps2, facets=.~Day, geom="line")
 p
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-17-1.png) 
 
 Looks good!
 
