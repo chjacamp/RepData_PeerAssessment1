@@ -69,7 +69,8 @@ We then plot total steps per day:
 ```r
 hist(steps_per_day$total_steps, breaks=7,
      main = "Total Steps per Day", 
-     xlab = "total steps/day")
+     xlab = "total steps/day",
+     col = "Red")
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-4-1.png) 
@@ -217,13 +218,15 @@ hist(steps_per_day$total_steps, breaks=7,
      ylim=c(1,10000),
      main = "Total Steps per Day 
      With NA Values",
-     xlab = "total steps/day")
+     xlab = "total steps/day",
+     col="Red")
 
 ##Without NA Values
 hist(steps_per_day_na$total_steps, breaks=7,
      main = "Total Steps per Day
      Without NA Values",
-     xlab = "total mean steps/day")
+     xlab = "total mean steps/day",
+     col ="Orange")
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-12-1.png) 
