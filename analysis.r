@@ -14,7 +14,7 @@ activity_data$date <- ymd(activity_data$date)
 steps_per_day <- activity_data %>%
   tbl_df %>%
   mutate(steps = as.numeric(as.character(steps))) %>%
-  group_by(day(date)) %>%
+  group_by(date) %>%
   mutate(total_steps = sum(steps)) %>%
   summarize(total_steps_mean=mean(total_steps), 
             total_steps_median=median(total_steps))
@@ -51,12 +51,45 @@ how_many_na <- sum(is.na(activity_data$steps))
 
 percentage_na <- how_many_na/dim_activity_data[1]
 
-replace_na <- activity_data %>%
-  tbl_df %>%
-  group_by(day(date)) %>%
-  summarize(steps_median=median(steps)) %>%
-  
-  
+##just in case I mess up  
+activity_data_na <- activity_data
 
+na_replace <- activity_data_na %>%
+  group_by(date) %>%
+  summarize(steps_mean=mean(steps))
+
+date_for_mean <- ymd("2012-10-01")
+grab <- as.integer(0)
+j <- as.integer(0)
+
+for (i in 1:length(activity_data$steps)) {
+
+  all_means <- mean(na_replace$steps_mean, na.rm=TRUE)
+  date_for_mean <- ymd(activity_data[i,2])
+  grab <- which(na_replace$date == ymd(date_for_mean))
+  
+    if (is.na(activity_data[i,1] && !is.na(na_replace[date_for_mean,2]))) {
+      
+      activity_data[i,1] <- na_replace[grab,2]
+    }
+    
+    else if (is.na(activity_data[i,1]) && is.na(na_replace[date_for_mean,2])) {
+      activity_data[i,1] <- all_means
+    }
+    
+    else if (!is.na(activity_data[i,1])) {
+      j <- j+1
+    }
+  
+  i <- i+1
+}
+
+index <- which(is.na(activity_data_na$steps))
+activity_data_na[index,1] <- na_replace
 
 ## Are there differences in activity patterns between weekdays and weekends?
+
+activity_data$steps2 <- activity_data$steps
+ind <- is.na(activity_data$steps2) # find where the missing values are
+ints <- activity_data$date[ind] # find to what intervals the missing values belong to
+activity_data$steps2[ind] <- na_replace$steps_mean[ints] # substitute the missing values with the average for that interval
