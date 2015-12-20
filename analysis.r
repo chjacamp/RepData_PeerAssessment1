@@ -131,6 +131,8 @@ hist(steps_per_day_na$total_steps_median, breaks=7,
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
+
+##FOR LOOPS FOR DAYS..>FEELING IT
 for (i in 1:17568) {
 ifelse(any(weekdays(activity_data_na$date[i]) == 
              c("Monday", "Tuesday","Wednesday","Thursday","Friday")),
@@ -140,4 +142,22 @@ ifelse(any(weekdays(activity_data_na$date[i]) ==
 }
 
 activity_data_na[,4] <- as.factor(activity_data_na[,4])
+names(activity_data_na) <- c("steps", "date", "interval", "Day")
+
+steps_per_interval_na <- activity_data_na %>%
+  tbl_df %>%
+  group_by(interval, Day) %>%
+  summarize(steps2 = mean(steps, na.rm=TRUE))
+
+
+p <- ggplot(steps_per_interval_na, aes(interval, steps2)) + 
+              geom_line(aes(colour = Day, Group = Day), size=.75) + theme_bw()
+p + scale_fill_manual(values=c("#CC6666", "#9999CC"))
+
+
+
+
+
+
+
 
