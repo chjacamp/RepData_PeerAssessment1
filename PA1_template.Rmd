@@ -10,6 +10,7 @@ output:
 
 I'm high-maintenance...
 ```{r results="hide"}
+options(digits=2)
 require(dplyr)
 require(ggplot2)
 require(lubridate)
@@ -41,7 +42,8 @@ We then plot total steps per day:
 ```{r}
 hist(steps_per_day$total_steps, breaks=7,
      main = "Total Steps per Day", 
-     xlab = "total steps/day")
+     xlab = "total steps/day",
+     col = "Red")
 ```
 
 It looks normally distributed, with between 10,000 and 15,000 being the most
@@ -50,8 +52,8 @@ most common count of total steps in a day.
 The mean and median of the total steps per day can now be calculated.
 
 ```{r}
-mean_total_steps <- mean(steps_per_day$total_steps, na.rm=TRUE)
-median_total_steps <- median(steps_per_day$total_steps, na.rm=TRUE)
+mean_total_steps <- as.integer(mean(steps_per_day$total_steps, na.rm=TRUE))
+median_total_steps <- as.integer(median(steps_per_day$total_steps, na.rm=TRUE))
 ```
 
 The mean of total steps per day is `r mean_total_steps`.
@@ -103,7 +105,7 @@ percentage_na <- how_many_na/dim_activity_data[1]
 percentage_na <- percentage_na * 100
 ```
 
-There are `r how_many_na` missing values which comprise `r percentage_na` 
+There are `r how_many_na` missing values which comprise `r percentage_na`%
 of the dataset.
 
 One strategy for filling in these values would be to either:
@@ -177,13 +179,15 @@ hist(steps_per_day$total_steps, breaks=7,
      ylim=c(1,10000),
      main = "Total Steps per Day 
      With NA Values",
-     xlab = "total steps/day")
+     xlab = "total steps/day",
+     col="Red")
 
 ##Without NA Values
 hist(steps_per_day_na$total_steps, breaks=7,
      main = "Total Steps per Day
      Without NA Values",
-     xlab = "total mean steps/day")
+     xlab = "total mean steps/day",
+     col ="Orange")
 ```
 
 We can distinctly see that while the data appears to be normally distributed in
@@ -264,4 +268,24 @@ p
 ```
 
 Looks good!
+
+## Limitations
+
+There are limitations that need to be addressed in this analysis.
+
+1. The number of intervals in the data are greater than the number of intervals in
+an actual day! We should look into the data set and creators to understand why
+this is going on.
+2. I assumed that there may be missing values within a day, but I suspect that some
+days simply had missing values due to the participant not recording on those days.
+A linear regression could be used to better approximate what the missing values 
+may have been.
+
+## Citations
+```{R}
+citation("dplyr")
+citation("ggplot2")
+citation("lubridate")
+```
+Peng, Roger D. 2013. Reproducible Research Peer Assessment 1. Coursera. https://class.coursera.org/repdata-035/human_grading/view/courses/975148/assessments/3/submissions/716
 

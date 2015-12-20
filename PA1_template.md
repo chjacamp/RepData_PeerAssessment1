@@ -6,6 +6,7 @@
 I'm high-maintenance...
 
 ```r
+options(digits=2)
 require(dplyr)
 ```
 
@@ -80,12 +81,12 @@ The mean and median of the total steps per day can now be calculated.
 
 
 ```r
-mean_total_steps <- mean(steps_per_day$total_steps, na.rm=TRUE)
-median_total_steps <- median(steps_per_day$total_steps, na.rm=TRUE)
+mean_total_steps <- as.integer(mean(steps_per_day$total_steps, na.rm=TRUE))
+median_total_steps <- as.integer(median(steps_per_day$total_steps, na.rm=TRUE))
 ```
 
-The mean of total steps per day is 1.0754923\times 10^{4}.
-The median of total steps per day is 1.06825\times 10^{4}. 
+The mean of total steps per day is 10754.
+The median of total steps per day is 10682. 
 
 These are pretty close - another indication that total steps per day
 are normally distributed. Initially I would expect our participant to work
@@ -138,7 +139,7 @@ percentage_na <- how_many_na/dim_activity_data[1]
 percentage_na <- percentage_na * 100
 ```
 
-There are 2304 missing values which comprise 13.1147541 
+There are 2304 missing values which comprise 13.11%
 of the dataset.
 
 One strategy for filling in these values would be to either:
@@ -251,9 +252,9 @@ print(df, type="html")
 ```
 
 ```
-##                mean   median
-## With NA    10754.92 10766.19
-## Without NA 10682.50 10766.19
+##             mean median
+## With NA    10755  10766
+## Without NA 10682  10766
 ```
 
 The median remains the same, unsurprisingly. The mean is only reduced slightly by
@@ -318,4 +319,91 @@ p
 ![](PA1_template_files/figure-html/unnamed-chunk-17-1.png) 
 
 Looks good!
+
+## Limitations
+
+There are limitations that need to be addressed in this analysis.
+
+1. The number of intervals in the data are greater than the number of intervals in
+an actual day! We should look into the data set and creators to understand why
+this is going on.
+2. I assumed that there may be missing values within a day, but I suspect that some
+days simply had missing values due to the participant not recording on those days.
+A linear regression could be used to better approximate what the missing values 
+may have been.
+
+## Citations
+
+```r
+citation("dplyr")
+```
+
+```
+## 
+## To cite package 'dplyr' in publications use:
+## 
+##   Hadley Wickham and Romain Francois (2015). dplyr: A Grammar of
+##   Data Manipulation. R package version 0.4.3.
+##   http://CRAN.R-project.org/package=dplyr
+## 
+## A BibTeX entry for LaTeX users is
+## 
+##   @Manual{,
+##     title = {dplyr: A Grammar of Data Manipulation},
+##     author = {Hadley Wickham and Romain Francois},
+##     year = {2015},
+##     note = {R package version 0.4.3},
+##     url = {http://CRAN.R-project.org/package=dplyr},
+##   }
+```
+
+```r
+citation("ggplot2")
+```
+
+```
+## 
+## To cite ggplot2 in publications, please use:
+## 
+##   H. Wickham. ggplot2: elegant graphics for data analysis.
+##   Springer New York, 2009.
+## 
+## A BibTeX entry for LaTeX users is
+## 
+##   @Book{,
+##     author = {Hadley Wickham},
+##     title = {ggplot2: elegant graphics for data analysis},
+##     publisher = {Springer New York},
+##     year = {2009},
+##     isbn = {978-0-387-98140-6},
+##     url = {http://had.co.nz/ggplot2/book},
+##   }
+```
+
+```r
+citation("lubridate")
+```
+
+```
+## 
+## To cite lubridate in publications use:
+## 
+##   Garrett Grolemund, Hadley Wickham (2011). Dates and Times Made
+##   Easy with lubridate. Journal of Statistical Software, 40(3),
+##   1-25. URL http://www.jstatsoft.org/v40/i03/.
+## 
+## A BibTeX entry for LaTeX users is
+## 
+##   @Article{,
+##     title = {Dates and Times Made Easy with {lubridate}},
+##     author = {Garrett Grolemund and Hadley Wickham},
+##     journal = {Journal of Statistical Software},
+##     year = {2011},
+##     volume = {40},
+##     number = {3},
+##     pages = {1--25},
+##     url = {http://www.jstatsoft.org/v40/i03/},
+##   }
+```
+Peng, Roger D. 2013. Reproducible Research Peer Assessment 1. Coursera. https://class.coursera.org/repdata-035/human_grading/view/courses/975148/assessments/3/submissions/716
 
